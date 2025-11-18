@@ -1,40 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, BadRequestException } from '@nestjs/common';
+import { AppService } from '../app.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './Schemas/user.schema';
-import { BadRequestException } from '@nestjs/common';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly appService: AppService) {}
 
   @Post()
-   async create(@Body() createUserDto: CreateUserDto) {
-    if (!createUserDto.email){
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    if (!createUserDto.email) {
       throw new BadRequestException('Email is required');
     }
-   
-    return this.userService.create(createUserDto);
+    return this.appService.createUser(createUserDto);
   }
 
   @Get()
   async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+    return this.appService.findAllUsers();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.appService.findUserById(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+    return this.appService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.appService.removeUser(id);
   }
 }

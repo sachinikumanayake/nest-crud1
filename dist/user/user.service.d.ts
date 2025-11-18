@@ -1,11 +1,11 @@
-import { Model } from 'mongoose';
-import { User, UserDocument } from './Schemas/user.schema';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 export declare class UserService {
-    private readonly userModel;
-    constructor(userModel: Model<UserDocument>);
-    create(user: User): Promise<User>;
+    private readonly userRepository;
+    constructor(userRepository: Repository<User>);
     findAll(): Promise<User[]>;
-    findOne(id: string): Promise<User>;
-    update(id: string, updateUser: Partial<User>): Promise<User>;
-    remove(id: string): Promise<User>;
+    findOne(id: number): Promise<User>;
+    create(user: Partial<User>): Promise<User>;
+    update(id: number, user: Partial<User>): Promise<User>;
+    remove(id: number): Promise<void>;
 }

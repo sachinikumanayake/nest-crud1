@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { User, UserSchema } from './user/Schemas/user.schema';
-import { UserModule } from './user/user.module'; 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
-
-
+import { User } from './user/user.entity';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-crud'),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    UserModule, 
-    
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST!,
+      port: parseInt(process.env.DB_PORT!, 10),
+      username: process.env.DB_USERNAME!,
+      password: process.env.DB_PASSWORD!,
+      database: process.env.DB_NAME!,
+      entities: [User],
+      synchronize: true,
+    }),
+    TypeOrmModule.forFeature([User]), 
   ],
-  controllers: [AppController],
-  providers: [AppService]
- 
-  
+  providers: [AppService],
 })
 export class AppModule {}

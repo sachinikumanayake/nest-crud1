@@ -14,35 +14,36 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
-const mongoose_1 = require("@nestjs/mongoose");
-const mongoose_2 = require("mongoose");
-const user_schema_1 = require("./Schemas/user.schema");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const user_entity_1 = require("./user.entity");
 let UserService = class UserService {
-    userModel;
-    constructor(userModel) {
-        this.userModel = userModel;
+    userRepository;
+    constructor(userRepository) {
+        this.userRepository = userRepository;
     }
-    async create(user) {
-        const newUser = new this.userModel(user);
-        return newUser.save();
+    findAll() {
+        return this.userRepository.find();
     }
-    async findAll() {
-        return this.userModel.find().exec();
+    findOne(id) {
+        return this.userRepository.findOneBy({ id });
     }
-    async findOne(id) {
-        return this.userModel.findById(id).exec();
+    create(user) {
+        const newUser = this.userRepository.create(user);
+        return this.userRepository.save(newUser);
     }
-    async update(id, updateUser) {
-        return this.userModel.findByIdAndUpdate(id, updateUser, { new: true }).exec();
+    async update(id, user) {
+        await this.userRepository.update(id, user);
+        return this.userRepository.findOneBy({ id });
     }
     async remove(id) {
-        return this.userModel.findByIdAndDelete(id).exec();
+        await this.userRepository.delete(id);
     }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

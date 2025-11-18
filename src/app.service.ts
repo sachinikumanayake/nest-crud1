@@ -1,16 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import  {Model} from 'mongoose'
-import { User, UserDocument } from './user/Schemas/user.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user/user.entity';
+
 @Injectable()
 export class AppService {
   constructor(
-   @InjectModel('User') private readonly userModel: Model<UserDocument> 
-  ){}
- async createUser (user: User): Promise<User>{
-  const newUser = new this.userModel(user)
-  return newUser.save()
- }
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
+  async createUser(user: Partial<User>): Promise<User> {
+    const newUser = this.userRepository.create(user);
+    return this.userRepository.save(newUser);
   }
+
+  async findAllUsers(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  async findUserById(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ id });
+  }
+
+  async updateUser(id: number, user: Partial<User>): Promise<User> {
+    await this.userRepository.update(id, user);
+    return this.userRepository.findOneBy({ id });
+  }
+
+  async removeUser(id: number): Promise<void> {
+    await this.userRepository.delete(id);
+  }
+}
 
