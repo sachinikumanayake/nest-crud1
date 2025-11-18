@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "nest-typescript-starter",
   "private": true,
   "version": "1.0.0",
@@ -87,5 +88,14 @@
       "@nestjs/core",
       "@swc/core"
     ]
+=======
+  "dependencies": {
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/mapped-types": "^2.1.0",
+    "@nestjs/mongoose": "^11.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "mongoose": "^8.18.0"
+>>>>>>> cfedf8042b28cebabc58a84a0b8cf5853b7a3974
   }
 }
